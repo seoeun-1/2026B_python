@@ -12,7 +12,7 @@
 # 3-2 : train.csv 파일 판다스로 불러오기 
 
 # [4. 데이터 전처리]
-# 수치형 결측치 보정: '나이(Age)' 컬럼의 결측치는 이상치에 강건한(Robust) 분석을 위해 중앙값(Median)으로 대체해야 한다.
+# 수치형 결측치 보정: '나이(Age)' 컬럼의 결측치는 이상치에 강건한(Robust) 분석을 위해 중앙값(Median)으로 대체해야 한다. 
 # 범주형 결측치 보정: '승선 항구(Embarked)' 컬럼의 결측치는 가장 빈번하게 등장하는 최빈값(Mode)으로 대체해야 한다.
 
 # [5. 데이터 시각화 및 분석]
@@ -23,7 +23,7 @@
 # 5-6 (승선 항구): sns.countplot을 사용하여 승선 항구(Embarked)에 따른 생존 여부(Survived)별 인원수를 시각화한다.
 
 import pandas as pd
-df = pd.read_csv( './train.csv')
+df = pd.read_csv( './day10/train.csv')
 
 
 # # 문제2[ 서울시 공공자전거 대여이력 분석]
