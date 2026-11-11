@@ -37,3 +37,52 @@
 # 테스트 세트의 앞선 3개 샘플 데이터에 대해:
 # 1. 모델이 예측한 클래스(0 또는 1)를 출력하세요.
 # 2. 각 샘플별 양성(0)/악성(1) 클래스에 대한 예측 확률(predict_proba)을 출력하세요.
+
+import pandas as pd
+df = pd.read_csv('./data.csv')
+df = df.drop(columns=['id', 'Unnamed: 32'], errors='ignore')
+df = df.dropna(axis=1, how='all')
+
+X = df.drop(columns=['diagnosis'])
+Y = df['diagnosis'].map({'M': 1, 'B': 0})
+
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, Y_train, Y_test = train_test_split(
+    X, Y, test_size=0.2, random_state=42, stratify=Y
+)
+
+from sklearn.preprocessing import StandardScaler
+
+ss = StandardScaler()
+ss.fit(X_train)
+X_train_scaled = ss.transform(X_train)
+X_test_scaled = ss.transform(X_test)
+
+from sklearn.linear_model import LogisticRegression
+
+model = LogisticRegression(random_state=42)
+model.fit(X_train_scaled, Y_train)
+
+Y_pred = model.predict(X_test_scaled)
+print(Y_pred)
+
+from sklearn.metrics import accuracy_score, confusion_matrix
+
+acc = accuracy_score(Y_test, Y_pred)
+print(acc)
+
+print('혼동 행렬 (행: 실제, 열: 예측 / 순서: 양성 0, 악성 1)')
+print(confusion_matrix(Y_test, Y_pred, labels=[0, 1]))
+
+print(model.classes_)
+print(model.intercept_)
+print(model.coef_.shape)
+
+weights = pd.DataFrame({
+    '피처': X.columns,
+    '계수': model.coef_[0]
+})
+print(weights)
+print(model.predict(X_test_scaled[:3]))
+print(model.predict_proba(X_test_scaled[:3]))
