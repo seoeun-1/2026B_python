@@ -39,50 +39,55 @@
 # 2. 각 샘플별 양성(0)/악성(1) 클래스에 대한 예측 확률(predict_proba)을 출력하세요.
 
 import pandas as pd
-df = pd.read_csv('./data.csv')
+
+df = pd.read_csv('./day14/data.csv')
 df = df.drop(columns=['id', 'Unnamed: 32'], errors='ignore')
 df = df.dropna(axis=1, how='all')
 
 X = df.drop(columns=['diagnosis'])
-Y = df['diagnosis'].map({'M': 1, 'B': 0})
+y = df['diagnosis'].map({'B': 0, 'M': 1})
 
 from sklearn.model_selection import train_test_split
-
-X_train, X_test, Y_train, Y_test = train_test_split(
-    X, Y, test_size=0.2, random_state=42, stratify=Y
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
 )
 
 from sklearn.preprocessing import StandardScaler
-
-ss = StandardScaler()
-ss.fit(X_train)
-X_train_scaled = ss.transform(X_train)
-X_test_scaled = ss.transform(X_test)
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
 
 from sklearn.linear_model import LogisticRegression
-
 model = LogisticRegression(random_state=42)
-model.fit(X_train_scaled, Y_train)
+model.fit(X_train_scaled, y_train)
+y_pred = model.predict(X_test_scaled)
 
-Y_pred = model.predict(X_test_scaled)
-print(Y_pred)
+from sklearn.metrics import accuracy_score
+print('정확도:', accuracy_score(y_test, y_pred))
 
-from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.metrics import confusion_matrix
+print(confusion_matrix(y_test, y_pred, labels=[0, 1]))
 
-acc = accuracy_score(Y_test, Y_pred)
-print(acc)
+from sklearn.metrics import classification_report
 
-print('혼동 행렬 (행: 실제, 열: 예측 / 순서: 양성 0, 악성 1)')
-print(confusion_matrix(Y_test, Y_pred, labels=[0, 1]))
-
+print(classification_report(y_test,y_pred,labels=[0, 1],target_names=['0', '1']))
 print(model.classes_)
 print(model.intercept_)
 print(model.coef_.shape)
 
-weights = pd.DataFrame({
-    '피처': X.columns,
-    '계수': model.coef_[0]
-})
+weights = pd.DataFrame()
+weights['피처'] = X.columns
+weights['계수'] = model.coef_[0]
 print(weights)
-print(model.predict(X_test_scaled[:3]))
-print(model.predict_proba(X_test_scaled[:3]))
+
+samples = X_test_scaled[:3]
+sample_pred = model.predict(samples)
+sample_proba = model.predict_proba(samples)
+print(sample_pred)
+
+result = pd.DataFrame()
+result['실제 클래스'] = y_test.iloc[:3].to_numpy()
+result['예측 클래스'] = sample_pred
+result['양성(0) 확률'] = sample_proba[:, 0]
+result['악성(1) 확률'] = sample_proba[:, 1]
+print(result)
