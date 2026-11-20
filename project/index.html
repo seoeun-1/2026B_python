@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>학생 성취도 예측</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="wrap">
+    <h1>학생 성취도 지수 예측</h1>
+    <p class="desc">학습 습관을 입력하면 머신러닝 모델이 성취도 지수(10~100)를 예측합니다.</p>
+
+    <form id="form" class="card">
+      <div class="field">
+        <div class="row"><span>공부 시간</span><span class="val"><span id="v_study_hours">5</span>시간</span></div>
+        <input type="range" id="study_hours" min="1" max="9" step="1" value="5">
+        <div class="hint">하루 공부 시간 (1~9)</div>
+      </div>
+
+      <div class="field">
+        <div class="row"><span>이전 성적</span><span class="val"><span id="v_previous_score">70</span>점</span></div>
+        <input type="range" id="previous_score" min="40" max="99" step="1" value="70">
+        <div class="hint">직전 시험 점수 (40~99)</div>
+      </div>
+
+      <div class="field">
+        <div class="row"><span>수면 시간</span><span class="val"><span id="v_sleep_hours">7</span>시간</span></div>
+        <input type="range" id="sleep_hours" min="4" max="9" step="1" value="7">
+        <div class="hint">하루 평균 수면 시간 (4~9)</div>
+      </div>
+
+      <div class="field">
+        <div class="row"><span>모의 문제 풀이 수</span><span class="val"><span id="v_papers_practiced">4</span>회</span></div>
+        <input type="range" id="papers_practiced" min="0" max="9" step="1" value="4">
+        <div class="hint">풀어 본 모의 문제지 수 (0~9)</div>
+      </div>
+
+      <div class="field">
+        <div class="row"><span>과외활동</span></div>
+        <div class="toggle">
+          <button type="button" id="ex_yes" class="on">참여</button>
+          <button type="button" id="ex_no">미참여</button>
+        </div>
+      </div>
+
+      <button type="submit" id="submit">예측하기</button>
+      <div class="error" id="error"></div>
+    </form>
+
+    <div class="card" id="result">
+      <div class="score-label">예상 성취도 지수</div>
+      <div class="score"><span id="prediction">-</span> <small>/ 100</small></div>
+      <div class="bar"><div id="bar"></div></div>
+      <div class="metric"><span>모델 성능 (R² Score)</span><strong id="r2">-</strong></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios@1.7.9/dist/axios.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
